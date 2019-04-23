@@ -24,11 +24,11 @@ class IDatabaseGUI(ABC):
     # на вход получает id распознанной книги и процент скидки,
     # изменяет текущую скидку для книги с полученным id.
     @abstractmethod
-    def addDiscount(self, bookId, newDiscount):
+    def addDiscount(self, book_id, new_discount):
         """Add discount"""
     
     # на вход получает id распознанной книги и количество книг,
     # изменяет количество книг на addition.
     @abstractmethod
-    def replenishBooks(self, bookId, addition):
+    def replenishBooks(self, book_id, addition):
         """Replenish books"""
