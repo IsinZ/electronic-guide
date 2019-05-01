@@ -10,7 +10,6 @@ import LoginWindow
 import AddExhibit
 import book_recognizer
 
-
 class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -39,7 +38,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             resArr.append(0)
             
         cap = cv2.VideoCapture(0)
-        recognizer = BookRecognizer.BookRecognizer.create("bfmatcher", parameters)
+        recognizer = book_recognizer.BookRecognizer.create("bfmatcher", parameters)
         _, frame = cap.read()
         ym, xm, _ = frame.shape
         
@@ -66,7 +65,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             cv2.waitKey(100)
             for i in range(l):
                 resArr[i] = resArr[i] + returned[i]
-            if max(resArr) > 400:
+            if max(resArr) > 500:
                 ID = resArr.index(max(resArr))
                 cv2.destroyAllWindows()
                 break
@@ -97,17 +96,35 @@ class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
         
     def Ok(self):
         #Здесь должна быть функция проверки логина и пароля, если ок, то выполняем следующее
-        self.close()
-        self.addExh = AddExh()
-        self.addExh.show()
+        if ((self.lineEditLogin.text()=="login")&(self.lineEditPass.text() == "password")):
+            self.close()
+            self.addExh = AddExh()
+            self.addExh.show()
+        else:
+            self.labelError.setText("Incorrect login or password")
+            
         
 class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
-     def __init__(self):
+    def __init__(self):
         super().__init__()
         self.setupUi(self) 
         self.setFixedSize(self.size())  
+        self.selectImage.clicked.connect(self.selectImgBtn)
+        self.selectInfo.clicked.connect(self.selectInfoBtn)
+        self.add.clicked.connect(self.addEx)
         
+    def selectInfoBtn(self):
+        self.infoFilePath = QFileDialog.getOpenFileName(self, "Open info file", "", "*.txt")[0]
+        
+    def selectImgBtn(self):
+        self.imgFilePath = QFileDialog.getOpenFileName(self, "Open image file", "", "*.jpg")[0]
 
+    def addEx(self):
+        print(self.lineEditName.text(), "\n")
+        print(self.lineEditCentury.text(), "\n")
+        print(self.infoFilePath, "\n")
+        print(self.imgFilePath, "\n")
+    
 def main():
     app = QtWidgets.QApplication(sys.argv)
     window = StartWin()  
