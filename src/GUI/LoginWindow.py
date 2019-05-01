@@ -17,6 +17,9 @@ class Ui_LoginWindow(object):
         self.labelLogin = QtWidgets.QLabel(self.centralwidget)
         self.labelLogin.setGeometry(QtCore.QRect(50, 50, 50, 15))
         self.labelLogin.setObjectName("labelLogin")
+        self.labelError = QtWidgets.QLabel(self.centralwidget)
+        self.labelError.setGeometry(QtCore.QRect(0, 0, 200, 15))
+        self.labelError.setObjectName("labelLogin")
         self.labelPass = QtWidgets.QLabel(self.centralwidget)
         self.labelPass.setGeometry(QtCore.QRect(50, 100, 50, 15))
         self.labelPass.setObjectName("labelPass")
@@ -38,6 +41,7 @@ class Ui_LoginWindow(object):
         _translate = QtCore.QCoreApplication.translate
         LoginWindow.setWindowTitle(_translate("LoginWindow", "Login"))
         self.labelLogin.setText(_translate("LoginWindow", "Login:"))
+        self.labelError.setText(_translate("LoginWindow", ""))
         self.labelPass.setText(_translate("LoginWindow", "Password:"))
         self.ok.setText(_translate("LoginWindow", "Ok"))
 
