@@ -12,4 +12,3 @@ class Exhibit:
         print(self.century)
         print(self.image_path)
         print(self.info_path)
-        
