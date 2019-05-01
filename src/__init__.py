@@ -18,7 +18,6 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.login.clicked.connect(self.logBtn)
         self.qr.clicked.connect(self.cryptQR)
         self.recognizer.clicked.connect(self.bookRecognizer)
-  
         
     def logBtn(self):
         self.logWin = LoginWin()
@@ -29,27 +28,26 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         result = []
         returned = []
         resArr = []
-        for i in os.listdir("infrastructure/Database/Books/Covers/"):
-            tpls.append(os.path.join("infrastructure/Database/Books/Covers/", i))
-        parameters = {'books' : tpls, 'kneighbours' : 2, 'coefficient' : 0.75, 'detector' : "ORB"}
+        for i in os.listdir('infrastructure/Database/Books/Covers/'):
+            tpls.append(os.path.join('infrastructure/Database/Books/Covers/', i))
+        parameters = {'books' : tpls, 'kneighbours' : 2, 'coefficient' : 0.75, 'detector' : 'ORB'}
         l = len(tpls)
         for i in range(l):
             result.append(0)
             resArr.append(0)
             
         cap = cv2.VideoCapture(0)
-        recognizer = book_recognizer.BookRecognizer.create("bfmatcher", parameters)
+        recognizer = book_recognizer.BookRecognizer.create('bfmatcher', parameters)
         _, frame = cap.read()
         ym, xm, _ = frame.shape
         
         for i in range(1, 50):
             cv2.rectangle(frame, (xm//2 - 110, ym//2 - 150), 
                                  (xm//2 + 110, ym//2 + 145), (0, 255, 255))
-            cv2.imshow("Recognize", frame)
+            cv2.imshow('Recognize', frame)
             cv2.waitKey(100)
             _, frame = cap.read()
             
-        
         while(True):
             _, frame = cap.read()
             cropFrame = frame[ym//2 - 170 : ym//2 + 170,
@@ -61,7 +59,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             out = out + '%'
             cv2.putText(frame, out, (200, 200), cv2.FONT_HERSHEY_SIMPLEX,
                         1, (0, 255, 255), 2)
-            cv2.imshow("Recognize", frame)
+            cv2.imshow('Recognize', frame)
             cv2.waitKey(100)
             for i in range(l):
                 resArr[i] = resArr[i] + returned[i]
@@ -71,13 +69,12 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
                 break
         print(ID, resArr)
         
-        
     def cryptQR(self):
         cap = cv2.VideoCapture(0)
         detector = cv2.QRCodeDetector()
         while(True):
             _, frame = cap.read()
-            cv2.imshow("Detector", frame)
+            cv2.imshow('Detector', frame)
             cv2.waitKey(100)
             data, _, _ = detector.detectAndDecode(frame)
             if (len(data)):
@@ -85,8 +82,6 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
                 cv2.destroyAllWindows()
                 break
                 
-                
-        
 class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
     def __init__(self):
         super().__init__()
@@ -96,12 +91,12 @@ class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
         
     def Ok(self):
         #Здесь должна быть функция проверки логина и пароля, если ок, то выполняем следующее
-        if ((self.lineEditLogin.text()=="login")&(self.lineEditPass.text() == "password")):
+        if ((self.lineEditLogin.text()=='login')&(self.lineEditPass.text() == 'password')):
             self.close()
             self.addExh = AddExh()
             self.addExh.show()
         else:
-            self.labelError.setText("Incorrect login or password")
+            self.labelError.setText('Incorrect login or password')
             
         
 class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
@@ -114,16 +109,16 @@ class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
         self.add.clicked.connect(self.addEx)
         
     def selectInfoBtn(self):
-        self.infoFilePath = QFileDialog.getOpenFileName(self, "Open info file", "", "*.txt")[0]
+        self.infoFilePath = QFileDialog.getOpenFileName(self, 'Open info file', '', '*.txt')[0]
         
     def selectImgBtn(self):
-        self.imgFilePath = QFileDialog.getOpenFileName(self, "Open image file", "", "*.jpg")[0]
+        self.imgFilePath = QFileDialog.getOpenFileName(self, 'Open image file', '', '*.jpg')[0]
 
     def addEx(self):
-        print(self.lineEditName.text(), "\n")
-        print(self.lineEditCentury.text(), "\n")
-        print(self.infoFilePath, "\n")
-        print(self.imgFilePath, "\n")
+        print(self.lineEditName.text(), '\n')
+        print(self.lineEditCentury.text(), '\n')
+        print(self.infoFilePath, '\n')
+        print(self.imgFilePath, '\n')
     
 def main():
     app = QtWidgets.QApplication(sys.argv)
@@ -132,4 +127,5 @@ def main():
     app.exec_()  
 
 if __name__ == '__main__':  
-    main() 
+    main()
+    
