@@ -1,6 +1,8 @@
 ﻿import sys, os
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QFileDialog, QMessageBox 
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from datetime import datetime
+from shutil import copyfile
 import cv2
 
 sys.path.insert(0, 'GUI')
@@ -10,6 +12,20 @@ import LoginWindow
 import AddExhibit
 import book_recognizer
 
+sys.path.insert(0, 'infrastructure')
+
+from CSVDatabase import CSVDatabase
+from Data_types.Exhibit import Exhibit
+
+# функция, которая создает id для нового объекта
+def GetNewID():
+    newID = str(datetime.now())
+    newID = newID.replace('-', '')
+    newID = newID.replace(' ', '')
+    newID = newID.replace(':', '')
+    newID = newID.replace('.', '')
+    return newID
+
 class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -18,6 +34,11 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.login.clicked.connect(self.logBtn)
         self.qr.clicked.connect(self.cryptQR)
         self.recognizer.clicked.connect(self.bookRecognizer)
+        CSV = CSVDatabase()
+        exs = CSV.getAllExhibits()
+        #self.tableView.setColumnCount(5)
+        #for ex in exs:
+            
         
     def logBtn(self):
         self.logWin = LoginWin()
@@ -91,7 +112,7 @@ class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
         
     def Ok(self):
         #Здесь должна быть функция проверки логина и пароля, если ок, то выполняем следующее
-        if ((self.lineEditLogin.text()=='login')&(self.lineEditPass.text() == 'password')):
+        if ((self.lineEditLogin.text() == 'l')&(self.lineEditPass.text() == 'p')):
             self.close()
             self.addExh = AddExh()
             self.addExh.show()
@@ -113,12 +134,24 @@ class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
         
     def selectImgBtn(self):
         self.imgFilePath = QFileDialog.getOpenFileName(self, 'Open image file', '', '*.jpg')[0]
-
+        
     def addEx(self):
-        print(self.lineEditName.text(), '\n')
-        print(self.lineEditCentury.text(), '\n')
-        print(self.infoFilePath, '\n')
-        print(self.imgFilePath, '\n')
+        ex_id = GetNewID()
+        name = self.lineEditName.text()
+        century = self.lineEditCentury.text()
+        image_path = ex_id + 'img'
+        info_path = ex_id + 'info'
+        ex = Exhibit(ex_id, name, century, image_path, info_path)
+        CSV = CSVDatabase()
+        if (CSV.addExhibit(ex) == -1):
+            self.labelError.setText('This exhibit already exists')
+        else:
+            copyfile(self.infoFilePath, 'infrastructure/Database/Info/' +
+                     info_path + '.txt')
+            copyfile(self.imgFilePath, 'infrastructure/Database/Img/' +
+                     image_path + '.jpg')
+            self.close()
+            
     
 def main():
     app = QtWidgets.QApplication(sys.argv)

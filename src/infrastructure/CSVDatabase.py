@@ -8,8 +8,8 @@ from Data_types.Exhibit import Exhibit
 # При записи любых данных в файлы БД вручную обязательно
 # в конце сделать перевод строки на новую!
 
-# path = 'infrastructure/Database/'
-path = 'Database/'
+path = 'infrastructure/Database/'
+# path = 'Database/'
 
 # функция для проверки наличия такого объекта в БД,
 # возвращает 1, если такого нет,
