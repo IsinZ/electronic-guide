@@ -26,6 +26,7 @@ def GetNewID():
     newID = newID.replace('.', '')
     return newID
 
+
 class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -34,14 +35,29 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.login.clicked.connect(self.logBtn)
         self.qr.clicked.connect(self.cryptQR)
         self.recognizer.clicked.connect(self.bookRecognizer)
+        self.setItems()
+        
+    def setItems(self):
         CSV = CSVDatabase()
         exs = CSV.getAllExhibits()
-        #for ex in exs:
-            
+        self.tableWidget.setColumnCount(3)
+        self.tableWidget.setHorizontalHeaderLabels(['Exhibit ID', 'Name',
+                                                    'Century'])
+        for ex in exs:
+            rowPosition = self.tableWidget.rowCount()
+            self.tableWidget.insertRow(rowPosition)
+            self.tableWidget.setItem(rowPosition, 0,
+                                     QtWidgets.QTableWidgetItem(ex.ex_id))
+            self.tableWidget.setItem(rowPosition, 1,
+                                     QtWidgets.QTableWidgetItem(ex.name))
+            self.tableWidget.setItem(rowPosition, 2,
+                                     QtWidgets.QTableWidgetItem(ex.century))
+        self.tableWidget.resizeColumnsToContents()
         
     def logBtn(self):
         self.logWin = LoginWin()
         self.logWin.show()
+        self.close()
         
     def bookRecognizer(self):
         tpls = []
@@ -112,9 +128,9 @@ class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
     def Ok(self):
         #Здесь должна быть функция проверки логина и пароля, если ок, то выполняем следующее
         if ((self.lineEditLogin.text() == 'l')&(self.lineEditPass.text() == 'p')):
-            self.close()
             self.addExh = AddExh()
             self.addExh.show()
+            self.close()
         else:
             self.labelError.setText('Incorrect login or password')
             
@@ -127,6 +143,11 @@ class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
         self.selectImage.clicked.connect(self.selectImgBtn)
         self.selectInfo.clicked.connect(self.selectInfoBtn)
         self.add.clicked.connect(self.addEx)
+        
+    def closeEvent(self, event):
+        self.startWin = StartWin()
+        self.startWin.show()
+        event.accept()
         
     def selectInfoBtn(self):
         self.infoFilePath = QFileDialog.getOpenFileName(self, 'Open info file', '', '*.txt')[0]
@@ -143,20 +164,19 @@ class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
         ex = Exhibit(ex_id, name, century, image_path, info_path)
         CSV = CSVDatabase()
         if (CSV.addExhibit(ex) == -1):
-            self.labelError.setText('This exhibit already exists')
+            self.label1.setText('This exhibit already exists')
         else:
             copyfile(self.infoFilePath, 'infrastructure/Database/Info/' +
                      info_path + '.txt')
             copyfile(self.imgFilePath, 'infrastructure/Database/Img/' +
                      image_path + '.jpg')
-            self.close()
+            self.label1.setText('Success!')
             
-    
 def main():
     app = QtWidgets.QApplication(sys.argv)
     window = StartWin()  
-    window.show() 
-    app.exec_()  
+    window.show()
+    app.exec_()
 
 if __name__ == '__main__':  
     main()

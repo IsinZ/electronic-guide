@@ -37,6 +37,6 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Guide"))
         self.recognizer.setText(_translate("MainWindow", "Recognizer"))
-        self.qr.setText(_translate("MainWindow", "Qr"))
+        self.qr.setText(_translate("MainWindow", "QR"))
         self.login.setText(_translate("MainWindow", "Login"))
 

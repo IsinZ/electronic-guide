@@ -19,7 +19,7 @@ class Ui_LoginWindow(object):
         self.labelLogin.setObjectName("labelLogin")
         self.labelError = QtWidgets.QLabel(self.centralwidget)
         self.labelError.setGeometry(QtCore.QRect(0, 0, 200, 15))
-        self.labelError.setObjectName("labelLogin")
+        self.labelError.setObjectName("labelError")
         self.labelPass = QtWidgets.QLabel(self.centralwidget)
         self.labelPass.setGeometry(QtCore.QRect(50, 100, 50, 15))
         self.labelPass.setObjectName("labelPass")
