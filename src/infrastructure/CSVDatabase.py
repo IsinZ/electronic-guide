@@ -1,5 +1,4 @@
 import csv # модуль для работы с csv-файлами.
-from datetime import datetime
 
 from IDatabaseInterfaces import IDatabaseRM, IDatabaseGUI
 from Data_types.Exhibit import Exhibit
@@ -19,18 +18,9 @@ def CheckExhibit(self, exhibit):
     print('CheckExhibit')
     exhibits = self.getAllExhibits()
     for ex in exhibits:
-        if (ex.name == exhibit.name and ex.century == exhibit.century):
+        if (ex.name == exhibit.name and ex.century == str(exhibit.century)):
             return -1
     return 1
-
-# функция, которая создает id для нового объекта
-def GetNewID():
-    newID = str(datetime.now())
-    newID = newID.replace('-', '')
-    newID = newID.replace(' ', '')
-    newID = newID.replace(':', '')
-    newID = newID.replace('.', '')
-    return newID
 
 class CSVDatabase(IDatabaseRM, IDatabaseGUI):
     # возвращает массив объектов exhibit.
@@ -46,7 +36,7 @@ class CSVDatabase(IDatabaseRM, IDatabaseGUI):
                                        line['info_path']))
         return exhibit
     
-    # если объект добавлен, возвращает его новый id,
+    # если объект добавлен, возвращает его id,
     # если такой объект уже был в БД, возвращает -1.
     def addExhibit(self, exhibit):
         print('addExhibit')
@@ -54,17 +44,16 @@ class CSVDatabase(IDatabaseRM, IDatabaseGUI):
         if (CheckExhibit(self, exhibit) == -1):
             print('This exhibit already exists')
             return -1
-        newID = GetNewID()
         with open(path + 'Exhibits.csv', 'a') as fExhibitsW:
             fieldnames = ['ex_id', 'name', 'century', 'image_path',
                           'info_path']
             writer = csv.DictWriter(fExhibitsW, fieldnames = fieldnames,
                                     delimiter = ',')
-            writer.writerow({'ex_id': newID, 'name': exhibit.name,
+            writer.writerow({'ex_id': exhibit.ex_id, 'name': exhibit.name,
                              'century': exhibit.century,
                              'image_path': exhibit.image_path,
                              'info_path': exhibit.info_path})
-        return newID
+        return exhibit.ex_id
     
     # возвращает массив объектов exhibit.
     def getAllExhibits(self):
