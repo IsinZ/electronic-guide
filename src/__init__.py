@@ -36,7 +36,6 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.recognizer.clicked.connect(self.bookRecognizer)
         CSV = CSVDatabase()
         exs = CSV.getAllExhibits()
-        #self.tableView.setColumnCount(5)
         #for ex in exs:
             
         

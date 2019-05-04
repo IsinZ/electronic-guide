@@ -23,9 +23,11 @@ class Ui_MainWindow(object):
         self.login = QtWidgets.QPushButton(self.centralwidget)
         self.login.setGeometry(QtCore.QRect(550, 450, 150, 50))
         self.login.setObjectName("login")
-        self.tableView = QtWidgets.QTableView(self.centralwidget)
-        self.tableView.setGeometry(QtCore.QRect(50, 50, 450, 450))
-        self.tableView.setObjectName("tableView")
+        self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
+        self.tableWidget.setGeometry(QtCore.QRect(50, 50, 450, 450))
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(0)
+        self.tableWidget.setRowCount(0)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -35,6 +37,6 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Guide"))
         self.recognizer.setText(_translate("MainWindow", "Recognizer"))
-        self.qr.setText(_translate("MainWindow", "QR"))
+        self.qr.setText(_translate("MainWindow", "Qr"))
         self.login.setText(_translate("MainWindow", "Login"))
 
