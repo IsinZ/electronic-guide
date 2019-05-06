@@ -10,6 +10,7 @@ sys.path.insert(0, 'GUI')
 import MainWindow
 import LoginWindow
 import AddExhibit
+import Info
 import book_recognizer
 
 sys.path.insert(0, 'infrastructure')
@@ -40,7 +41,11 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
     def setItems(self):
         CSV = CSVDatabase()
         exs = CSV.getAllExhibits()
+        self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(3)
+        # self.tableWidget.verticalHeader().hide() # скрыть нумерацию строк
+        self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        # запрет редактирования
         self.tableWidget.setHorizontalHeaderLabels(['Exhibit ID', 'Name',
                                                     'Century'])
         for ex in exs:
@@ -52,7 +57,10 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
                                      QtWidgets.QTableWidgetItem(ex.name))
             self.tableWidget.setItem(rowPosition, 2,
                                      QtWidgets.QTableWidgetItem(ex.century))
-        self.tableWidget.resizeColumnsToContents()
+        # self.tableWidget.resizeColumnsToContents()
+        self.tableWidget.setColumnWidth(0, 130)
+        self.tableWidget.setColumnWidth(1, 243)
+        self.tableWidget.setColumnWidth(2, 60)
         
     def logBtn(self):
         self.logWin = LoginWin()
@@ -172,12 +180,20 @@ class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
                      image_path + '.jpg')
             self.label1.setText('Success!')
             
+class Info(QtWidgets.QMainWindow, Info.Ui_Info):
+    def __init__(self, ex_id):
+        super().__init__()
+        self.setupUi(self)  
+        self.setFixedSize(self.size())
+        self.info.setText('EXHIBIT ' + str(ex_id))
+            
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    window = StartWin()  
+    window = StartWin()
+    # window = Info(1)
     window.show()
     app.exec_()
-
+    
 if __name__ == '__main__':  
     main()
     
