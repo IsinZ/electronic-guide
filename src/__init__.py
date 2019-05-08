@@ -1,4 +1,4 @@
-﻿import sys, os
+import sys, os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from datetime import datetime
@@ -11,7 +11,7 @@ import MainWindow
 import LoginWindow
 import AddExhibit
 import Info
-import book_recognizer
+import exhibit_recognizer
 
 sys.path.insert(0, 'infrastructure')
 
@@ -35,7 +35,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.setFixedSize(self.size())
         self.login.clicked.connect(self.logBtn)
         self.qr.clicked.connect(self.cryptQR)
-        self.recognizer.clicked.connect(self.bookRecognizer)
+        self.recognizer.clicked.connect(self.exhibitRecognizer)
         self.setItems()
         
     def setItems(self):
@@ -67,21 +67,21 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.logWin.show()
         self.close()
         
-    def bookRecognizer(self):
+    def exhibitRecognizer(self):
         tpls = []
         result = []
         returned = []
         resArr = []
-        for i in os.listdir('infrastructure/Database/Books/Covers/'):
-            tpls.append(os.path.join('infrastructure/Database/Books/Covers/', i))
-        parameters = {'books' : tpls, 'kneighbours' : 2, 'coefficient' : 0.75, 'detector' : 'ORB'}
+        for i in os.listdir('infrastructure/Database/Img/'):
+            tpls.append(os.path.join('infrastructure/Database/Img/', i))
+        parameters = {'exhibits' : tpls, 'kneighbours' : 2, 'coefficient' : 0.75, 'detector' : 'ORB'}
         l = len(tpls)
         for i in range(l):
             result.append(0)
             resArr.append(0)
             
         cap = cv2.VideoCapture(0)
-        recognizer = book_recognizer.BookRecognizer.create('bfmatcher', parameters)
+        recognizer = exhibit_recognizer.ExhibitRecognizer.create('bfmatcher', parameters)
         _, frame = cap.read()
         ym, xm, _ = frame.shape
         
