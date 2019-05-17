@@ -1,4 +1,5 @@
 import sys, os
+import exhibit_recognizer
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from datetime import datetime
@@ -11,7 +12,6 @@ import MainWindow
 import LoginWindow
 import AddExhibit
 import Info
-import exhibit_recognizer
 
 sys.path.insert(0, 'infrastructure')
 
@@ -73,9 +73,14 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         returned = []
         resArr = []
         for i in os.listdir('infrastructure/Database/Img/'):
-            tpls.append(os.path.join('infrastructure/Database/Img/', i))
+            if (re.fullmatch('\d+img\D+', i)):
+                tpls.append(os.path.join('infrastructure/Database/Img/', i))
         parameters = {'exhibits' : tpls, 'kneighbours' : 2, 'coefficient' : 0.75, 'detector' : 'ORB'}
         l = len(tpls)
+        if (l == 0):
+            print("Should be one or more exhibits")
+            return -1
+        
         for i in range(l):
             result.append(0)
             resArr.append(0)
@@ -99,7 +104,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             cv2.rectangle(frame, (xm//2 - 110, ym//2 - 150), 
                                  (xm//2 + 110, ym//2 + 145), (0, 255, 255))
             returned = recognizer.recognize(cropFrame)
-            out = str(100 * max(resArr) / 400)
+            out = str(100 * max(resArr) / 500)
             out = out + '%'
             cv2.putText(frame, out, (200, 200), cv2.FONT_HERSHEY_SIMPLEX,
                         1, (0, 255, 255), 2)
@@ -108,10 +113,13 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             for i in range(l):
                 resArr[i] = resArr[i] + returned[i]
             if max(resArr) > 500:
-                ID = resArr.index(max(resArr))
-                cv2.destroyAllWindows()
                 break
-        print(ID, resArr)
+               
+        ID = resArr.index(max(resArr))
+        cv2.destroyAllWindows()
+        res = tpls[ID][len(tpls[i]) - 27 : len(tpls[i]) - 7]
+        print(res)
+        return res
         
     def cryptQR(self):
         cap = cv2.VideoCapture(0)
@@ -124,6 +132,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             if (len(data)):
                 print(data)
                 cv2.destroyAllWindows()
+                return(data)
                 break
                 
 class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
