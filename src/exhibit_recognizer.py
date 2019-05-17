@@ -1,20 +1,20 @@
 import cv2
 from abc import ABC, abstractmethod
 
-class BookRecognizer(ABC):
+class ExhibitRecognizer(ABC):
     @staticmethod
     def create(name, parameters):
         if name == "bfmatcher":
-            return BFMatcherBookRecognizer(parameters)
+            return BFMatcherExhibitRecognizer(parameters)
         else:
             raise Exception()
         
     @abstractmethod
     def recognize(self, frame):
-        """Recognize book"""
+        """Recognize exhibit"""
         
 
-class BFMatcherBookRecognizer(BookRecognizer):
+class BFMatcherExhibitRecognizer(ExhibitRecognizer):
     
     def __init__(self, parameters):
         self.parameters = parameters
@@ -33,17 +33,17 @@ class BFMatcherBookRecognizer(BookRecognizer):
                 self.detector = cv2.xfeatures2d.SURF_create()
                 
         self.matcher = cv2.BFMatcher()
-        self.descriptors = self.detect(self.parameters['books'])
+        self.descriptors = self.detect(self.parameters['exhibits'])
         self.coeff = self.parameters['coefficient']
         self.kneighbours = self.parameters['kneighbours']
     
-    def detect(self, books):
+    def detect(self, exhibits):
         descriptors = []
-        for b in books:
+        for b in exhibits:
             f = cv2.imread(b)
             gray = cv2.cvtColor(f, cv2.COLOR_BGR2GRAY)
-            _, desBook = self.detector.detectAndCompute(gray, None)
-            descriptors.append(desBook)
+            _, desExh = self.detector.detectAndCompute(gray, None)
+            descriptors.append(desExh)
         return descriptors
     
             
