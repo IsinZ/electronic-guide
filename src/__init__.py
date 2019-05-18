@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, re
 import exhibit_recognizer
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
@@ -17,6 +17,8 @@ sys.path.insert(0, 'infrastructure')
 
 from CSVDatabase import CSVDatabase
 from Data_types.Exhibit import Exhibit
+
+path = 'infrastructure/Database/'
 
 # функция, которая создает id для нового объекта
 def GetNewID():
@@ -194,12 +196,31 @@ class Info(QtWidgets.QMainWindow, Info.Ui_Info):
         super().__init__()
         self.setupUi(self)  
         self.setFixedSize(self.size())
-        self.info.setText('EXHIBIT ' + str(ex_id))
+        CSV = CSVDatabase()
+        ex = CSV.getExhibit(ex_id)
+        if (ex == -1):
+            self.info.setText('There is no exhibit with this id')
+        else:
+            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
+            self.info.append('NAME: ')
+            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
+            self.info.append(ex.name + '\n')
+            
+            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
+            self.info.append('CENTURY: ')
+            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
+            self.info.append(ex.century + '\n')
+            
+            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
+            self.info.append('INFORMATION:')
+            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
+            with open(path + 'Info/' + ex.info_path + '.txt', 'r') as fInfoR:
+                self.info.append(fInfoR.read())
             
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    window = StartWin()
-    # window = Info(1)
+    #window = StartWin()
+    window = Info(1)
     window.show()
     app.exec_()
     
