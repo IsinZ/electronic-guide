@@ -1,9 +1,9 @@
 import sys, os, re
-import exhibit_recognizer
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from datetime import datetime
 from shutil import copyfile
+import exhibit_recognizer
 import cv2
 
 sys.path.insert(0, 'GUI')
@@ -17,8 +17,6 @@ sys.path.insert(0, 'infrastructure')
 
 from CSVDatabase import CSVDatabase
 from Data_types.Exhibit import Exhibit
-
-path = 'infrastructure/Database/'
 
 # функция, которая создает id для нового объекта
 def GetNewID():
@@ -87,7 +85,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             result.append(0)
             resArr.append(0)
             
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture("https://192.168.42.129:8080/video")
         recognizer = exhibit_recognizer.ExhibitRecognizer.create('bfmatcher', parameters)
         _, frame = cap.read()
         ym, xm, _ = frame.shape
@@ -96,7 +94,12 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             cv2.rectangle(frame, (xm//2 - 110, ym//2 - 150), 
                                  (xm//2 + 110, ym//2 + 145), (0, 255, 255))
             cv2.imshow('Recognize', frame)
-            cv2.waitKey(100)
+            key = cv2.waitKey(100)
+            if (key == 27):
+                cap.release()
+                cv2.destroyAllWindows()
+                return -1
+            
             _, frame = cap.read()
             
         while(True):
@@ -106,17 +109,17 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             cv2.rectangle(frame, (xm//2 - 110, ym//2 - 150), 
                                  (xm//2 + 110, ym//2 + 145), (0, 255, 255))
             returned = recognizer.recognize(cropFrame)
-            out = str(100 * max(resArr) / 500)
-            out = out + '%'
-            cv2.putText(frame, out, (200, 200), cv2.FONT_HERSHEY_SIMPLEX,
-                        1, (0, 255, 255), 2)
             cv2.imshow('Recognize', frame)
-            cv2.waitKey(100)
+            key = cv2.waitKey(100)
             for i in range(l):
                 resArr[i] = resArr[i] + returned[i]
             if max(resArr) > 500:
                 break
-               
+            print(resArr)
+            if (key == 27):
+                cap.release()
+                cv2.destroyAllWindows()
+                return -1
         ID = resArr.index(max(resArr))
         cv2.destroyAllWindows()
         res = tpls[ID][len(tpls[i]) - 27 : len(tpls[i]) - 7]
@@ -124,18 +127,22 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         return res
         
     def cryptQR(self):
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture("http://192.168.42.129:8080/video")
         detector = cv2.QRCodeDetector()
         while(True):
             _, frame = cap.read()
             cv2.imshow('Detector', frame)
-            cv2.waitKey(100)
+            key = cv2.waitKey(100)
+            if (key == 27):
+                cap.release()
+                cv2.destroyAllWindows()
+                return -1
+            
             data, _, _ = detector.detectAndDecode(frame)
             if (len(data)):
                 print(data)
                 cv2.destroyAllWindows()
                 return(data)
-                break
                 
 class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
     def __init__(self):
@@ -196,33 +203,15 @@ class Info(QtWidgets.QMainWindow, Info.Ui_Info):
         super().__init__()
         self.setupUi(self)  
         self.setFixedSize(self.size())
-        CSV = CSVDatabase()
-        ex = CSV.getExhibit(ex_id)
-        if (ex == -1):
-            self.info.setText('There is no exhibit with this id')
-        else:
-            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
-            self.info.append('NAME: ')
-            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
-            self.info.append(ex.name + '\n')
-            
-            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
-            self.info.append('CENTURY: ')
-            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
-            self.info.append(ex.century + '\n')
-            
-            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
-            self.info.append('INFORMATION:')
-            self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
-            with open(path + 'Info/' + ex.info_path + '.txt', 'r') as fInfoR:
-                self.info.append(fInfoR.read())
+        self.info.setText('EXHIBIT ' + str(ex_id))
             
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    #window = StartWin()
-    window = Info(1)
+    window = StartWin()
+    # window = Info(1)
     window.show()
     app.exec_()
+    cv2.destroyAllWindows()
     
 if __name__ == '__main__':  
     main()

@@ -51,15 +51,16 @@ class BFMatcherExhibitRecognizer(ExhibitRecognizer):
         arr = []
         ORB = cv2.ORB_create()
         frameGray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        _, desFrame = ORB.detectAndCompute(frameGray, None)
-
-        for t in self.descriptors:
-            matches = self.matcher.knnMatch(t, desFrame, self.kneighbours)
-            good = []
-            for m,n in matches:
-                if m.distance < n.distance * self.coeff: 
-                    good.append(m)
-                    
-            arr.append(len(good))
-        
+        kp, desFrame = ORB.detectAndCompute(frameGray, None)
+        if(len(kp)):
+            for t in self.descriptors:
+                matches = self.matcher.knnMatch(t, desFrame, self.kneighbours)
+                good = []
+                for m,n in matches:
+                    if m.distance < n.distance * self.coeff: 
+                        good.append(m)
+                arr.append(len(good))
+        else:
+            for i in range(len(self.descriptors)):
+                arr.append(0)
         return arr
