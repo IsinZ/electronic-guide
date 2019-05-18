@@ -1,6 +1,7 @@
 import sys, os, re
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QWidget, QHBoxLayout, QLabel, QApplication
+from PyQt5.QtGui import QPixmap
 from datetime import datetime
 from shutil import copyfile
 import exhibit_recognizer
@@ -198,6 +199,19 @@ class AddExh(QtWidgets.QMainWindow, AddExhibit.Ui_AddExhibit):
                      image_path + '.jpg')
             self.label1.setText('Success!')
             
+class Img(QWidget):
+    def __init__(self, ex):
+        super().__init__()
+        hbox = QHBoxLayout(self)
+        pixmap = QPixmap(path + 'Img/' + ex.image_path + '.jpg')
+        lbl = QLabel(self)
+        lbl.setPixmap(pixmap)
+        hbox.addWidget(lbl)
+        self.setLayout(hbox)
+        self.move(933, 149)
+        self.setWindowTitle(ex.name)
+        self.show()
+            
 class Info(QtWidgets.QMainWindow, Info.Ui_Info):
     def __init__(self, ex_id):
         super().__init__()
@@ -208,6 +222,9 @@ class Info(QtWidgets.QMainWindow, Info.Ui_Info):
         if (ex == -1):
             self.info.setText('There is no exhibit with this id')
         else:
+            self.img = Img(ex)
+            self.img.show()
+            #
             self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
             self.info.append('NAME: ')
             self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
