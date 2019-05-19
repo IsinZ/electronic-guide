@@ -11,12 +11,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Info(object):
     def setupUi(self, Info):
         Info.setObjectName("Info")
-        Info.resize(600, 400)
+        Info.resize(600, 450)
         self.centralwidget = QtWidgets.QWidget(Info)
         self.centralwidget.setObjectName("centralwidget")
         self.info = QtWidgets.QTextBrowser(self.centralwidget)
         self.info.setGeometry(QtCore.QRect(20, 20, 560, 360))
         self.info.setObjectName("info")
+        self.readBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.readBtn.setGeometry(QtCore.QRect(20, 400, 560, 30))
+        self.readBtn.setObjectName("readBtn")
         Info.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(Info)
@@ -25,4 +28,5 @@ class Ui_Info(object):
     def retranslateUi(self, Info):
         _translate = QtCore.QCoreApplication.translate
         Info.setWindowTitle(_translate("Info", "Info"))
+        self.readBtn.setText(_translate("Info", "Read"))
 
