@@ -105,7 +105,7 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             result.append(0)
             resArr.append(0)
             
-        cap = cv2.VideoCapture("https://192.168.42.129:8080/video")
+        cap = cv2.VideoCapture("http://192.168.42.129:8080/video")
         recognizer = exhibit_recognizer.ExhibitRecognizer.create('bfmatcher', parameters)
         _, frame = cap.read()
         ym, xm, _ = frame.shape
@@ -144,7 +144,8 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         cv2.destroyAllWindows()
         res = tpls[ID][len(tpls[i]) - 27 : len(tpls[i]) - 7]
         print(res)
-        return res
+        self.window = Info(res)
+        self.window.show()
         
     def cryptQR(self):
         cap = cv2.VideoCapture("http://192.168.42.129:8080/video")
@@ -162,7 +163,9 @@ class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
             if (len(data)):
                 print(data)
                 cv2.destroyAllWindows()
-                return(data)
+                self.window = Info(data)
+                self.window.show()
+                break
                 
 class LoginWin(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
     def __init__(self):
@@ -275,7 +278,6 @@ class Info(QtWidgets.QMainWindow, Info.Ui_Info):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     window = StartWin()
-    # window = Info(1)
     window.show()
     app.exec_()
     cv2.destroyAllWindows()
