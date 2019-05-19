@@ -2,10 +2,13 @@ import sys, os, re
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QWidget, QHBoxLayout, QLabel, QApplication
 from PyQt5.QtGui import QPixmap
+from pygame import mixer
 from datetime import datetime
 from shutil import copyfile
+from gtts import gTTS
 import exhibit_recognizer
 import cv2
+import time
 
 sys.path.insert(0, 'GUI')
 
@@ -29,6 +32,21 @@ def GetNewID():
     newID = newID.replace(':', '')
     newID = newID.replace('.', '')
     return newID
+
+# функция text to speech
+def Read(text):
+    if (text != ''):
+        mp3_name = path + str(GetNewID()) + '.mp3'
+        mixer.init()
+        tts = gTTS(text=text, lang='en')
+        tts.save(mp3_name)
+        mixer.music.load(mp3_name)
+        mixer.music.play()
+        while mixer.music.get_busy():
+            time.sleep(0.1)
+        mixer.stop()
+        mixer.quit()
+        # os.remove(mp3_name)
 
 class StartWin(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
@@ -210,18 +228,24 @@ class Img(QWidget):
         self.setLayout(hbox)
         self.move(933, 149)
         self.setWindowTitle(ex.name)
-        self.show()
             
 class Info(QtWidgets.QMainWindow, Info.Ui_Info):
     def __init__(self, ex_id):
         super().__init__()
         self.setupUi(self)  
         self.setFixedSize(self.size())
+        self.text = ''
+        self.start(ex_id)
+        self.readBtn.clicked.connect(self.logBtn)
+        # Read(text)
+        
+    def start(self, ex_id):
         CSV = CSVDatabase()
         ex = CSV.getExhibit(ex_id)
         if (ex == -1):
             self.info.setText('There is no exhibit with this id')
         else:
+            #
             self.img = Img(ex)
             self.img.show()
             #
@@ -229,18 +253,25 @@ class Info(QtWidgets.QMainWindow, Info.Ui_Info):
             self.info.append('NAME: ')
             self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
             self.info.append(ex.name + '\n')
+            self.text += ex.name + '. '
             #
             self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
             self.info.append('CENTURY: ')
             self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
             self.info.append(ex.century + '\n')
+            self.text += 'The ' + ex.century + ' century' + '. '
             #
             self.info.setCurrentFont(QtGui.QFont('Times New Roman', 15, QtGui.QFont.Bold))
             self.info.append('INFORMATION:')
             self.info.setCurrentFont(QtGui.QFont('Times New Roman', 13, QtGui.QFont.Normal))
             with open(path + 'Info/' + ex.info_path + '.txt', 'r') as fInfoR:
                 self.info.append(fInfoR.read())
-            
+                fInfoR.seek(0)
+                self.text += fInfoR.read()
+        
+    def logBtn(self):
+        Read(self.text)
+        
 def main():
     app = QtWidgets.QApplication(sys.argv)
     window = StartWin()
