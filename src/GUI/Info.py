@@ -7,10 +7,12 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 
 class Ui_Info(object):
     def setupUi(self, Info):
         Info.setObjectName("Info")
+        Info.setWindowIcon(QIcon("GUI/UI/icon.png"))
         Info.resize(600, 450)
         self.centralwidget = QtWidgets.QWidget(Info)
         self.centralwidget.setObjectName("centralwidget")
