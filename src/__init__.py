@@ -275,7 +275,7 @@ class Info(QtWidgets.QMainWindow, Info.Ui_Info):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     window = StartWin()
-    window = Info(20190518200225783181)
+    # window = Info(1)
     window.show()
     app.exec_()
     cv2.destroyAllWindows()
