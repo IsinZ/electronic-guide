@@ -7,10 +7,12 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 
 class Ui_AddExhibit(object):
     def setupUi(self, AddExhibit):
         AddExhibit.setObjectName("AddExhibit")
+        AddExhibit.setWindowIcon(QIcon("GUI/UI/icon.png"))
         AddExhibit.resize(300, 300)
         self.centralwidget = QtWidgets.QWidget(AddExhibit)
         self.centralwidget.setObjectName("centralwidget")
