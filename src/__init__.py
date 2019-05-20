@@ -1,7 +1,7 @@
 import sys, os, re
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QWidget, QHBoxLayout, QLabel, QApplication
-from PyQt5.QtGui import QPixmap
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtWidgets import QFileDialog, QWidget, QHBoxLayout, QLabel
+from PyQt5.QtGui import QPixmap, QIcon
 from pygame import mixer
 from datetime import datetime
 from shutil import copyfile
@@ -231,6 +231,7 @@ class Img(QWidget):
         self.setLayout(hbox)
         self.move(933, 149)
         self.setWindowTitle(ex.name)
+        self.setWindowIcon(QIcon('GUI/UI/icon.png'))
             
 class Info(QtWidgets.QMainWindow, Info.Ui_Info):
     def __init__(self, ex_id):
